@@ -9,12 +9,28 @@ import SceneKit
 
 class GameViewController: UIViewController {
     
+    //MARK: - Outlets
+    let label = UILabel()
+    
     // MARK: - Properties
     var duration: TimeInterval = 5
-    var score = 0
+    var score = 0 {
+        didSet {
+            label.text = "Score: \(score)"
+        }
+    }
     var ship: SCNNode!
     
     // MARK: - Methods
+    func addLabel() {
+        label.frame = CGRect(x:0, y:0, width: scnViev.frame.width, height: 100)
+        label.font = UIFont.systemFont(ofSize: 30)
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        scnViev.addSubview(label)
+        score = 0
+    }
+    
     func addShip() {
         // Move ship farhter from viev
         let x = Int.random(in: -25...25)
@@ -30,7 +46,9 @@ class GameViewController: UIViewController {
         ship.runAction(.move(to: SCNVector3(), duration: duration)) {
             self.ship.removeFromParentNode()
             
-            print(#line, #function, "Game over")
+            DispatchQueue.main.async {
+                self.label.text = "game over\nScore: \(self.score)"
+            }
         }
         
         // retrieve the SCNView
@@ -120,6 +138,9 @@ class GameViewController: UIViewController {
         
         //Add ship
         addShip()
+        
+        //add label
+        addLabel()
     }
     
     @objc
@@ -158,6 +179,10 @@ class GameViewController: UIViewController {
             
             SCNTransaction.commit()
         }
+    }
+    //MARK:- computed properties
+    var scnViev: SCNView {
+        self.view as! SCNView
     }
     
     override var shouldAutorotate: Bool {
