@@ -5,25 +5,54 @@
 //  Created by Вова Пупкин on 23.10.2020.
 //
 
-import UIKit
-import QuartzCore
 import SceneKit
 
 class GameViewController: UIViewController {
-
+    
+    // MARK: - Properties
+    var ship: SCNNode!
+    
+    // MARK: - Methods
+    func addShip() {
+        // retrieve the SCNView
+        let scnView = self.view as! SCNView
+        
+        //add ship in the scene
+        scnView.scene?.rootNode.addChildNode(ship)
+    }
+    
+    func getShip() -> SCNNode {
+        //get scene
+        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        
+        //retrieve the ship node
+        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!.clone()
+        
+        return ship
+    }
+    
+    func removeShip() {
+        // retrieve the SCNView
+        let scnView = self.view as! SCNView
+        
+        //remove the ship
+        scnView.scene?.rootNode.childNode(withName: "ship", recursively: true)?.removeFromParentNode()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // create a new scene
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
+
         // create and add a camera to the scene
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+   //     cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -40,10 +69,10 @@ class GameViewController: UIViewController {
         scene.rootNode.addChildNode(ambientLightNode)
         
         // retrieve the ship node
-        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
+      //  let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
         
         // animate the 3d object
-        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
+//        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
@@ -63,6 +92,15 @@ class GameViewController: UIViewController {
         // add a tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
+        
+        //remove the ship
+        removeShip()
+        
+        //get ship
+        ship = getShip()
+        
+        //Add ship
+        addShip()
     }
     
     @objc
